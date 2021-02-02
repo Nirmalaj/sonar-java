@@ -22,6 +22,7 @@ package org.sonar.java.checks;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.plugins.java.api.semantic.MethodMatchers;
@@ -57,10 +58,14 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
     "/",
     "./",
     "../",
+    "~/",
     "\\",
     ".\\",
     "..\\"
   );
+
+  private static final Pattern WINDOWS_DISK_PATTERN = Pattern.compile("^[A-Z]:\\\\.*");
+
   private static final String MESSAGE = "Make sure the \"PATH\" used to find this command includes only what you intend.";
 
   @Override
@@ -69,7 +74,8 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
   }
 
   private static boolean isCompliant(String command) {
-    return STARTS.stream().anyMatch(command::startsWith);
+    return STARTS.stream().anyMatch(command::startsWith) ||
+      WINDOWS_DISK_PATTERN.matcher(command).matches();
   }
 
   @Override

@@ -2,6 +2,8 @@ package checks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class OSCommandsPath {
   private static final String NON_COMPLIANT_COMMAND = "make";
@@ -42,6 +44,24 @@ public class OSCommandsPath {
 
   private static final String[] ENVIRONMENT = new String[]{"DEBUG=true"};
   private static final File FILE = null;
+
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST = Arrays.asList("make");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_UNIX_PARENT = Arrays.asList("m../ake");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_UNIX_CURRENT = Arrays.asList("mak./e");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_UNIX_HOME = Arrays.asList("bin~/make");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE = Arrays.asList("7:\\\\make");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_PARENT = Arrays.asList("m..\\ake");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT = Arrays.asList("ma.\\ke");
+  private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK = Arrays.asList("SERVER\\make");
+
+  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_ABSOLUTE = Arrays.asList("/usr/bin/make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_PARENT = Arrays.asList("../make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_CURRENT = Arrays.asList("./make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_HOME = Arrays.asList("~/bin/make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE = Arrays.asList("Z:\\make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_WINDOWS_PARENT = Arrays.asList("..\\make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT = Arrays.asList(".\\make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK = Arrays.asList("\\\\SERVER\\make");
 
   public void execString() throws IOException {
     Runtime.getRuntime().exec("make");  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
@@ -201,5 +221,26 @@ public class OSCommandsPath {
     builder.command(nonCompliantCommand); // Compliant FN Cannot read from non-final strings
     String compliantCommand = "/usr/bin/make";
     builder.command(compliantCommand);
+  }
+
+  private void commandList() {
+    ProcessBuilder builder = new ProcessBuilder();
+    builder.command(Arrays.asList("make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("m../ake"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("mak./e"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("bin~/make"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("7:\\\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("m..\\ake"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("ma.\\ke"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("SERVER\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+
+    builder.command(Arrays.asList("/usr/bin/make"));
+    builder.command(Arrays.asList("../make"));
+    builder.command(Arrays.asList("./make"));
+    builder.command(Arrays.asList("~/bin/make"));
+    builder.command(Arrays.asList("Z:\\make"));
+    builder.command(Arrays.asList("..\\make"));
+    builder.command(Arrays.asList(".\\make"));
+    builder.command(Arrays.asList("\\\\SERVER\\make"));
   }
 }

@@ -61,6 +61,12 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
     .withAnyParameters()
     .build();
 
+  private static final MethodMatchers ARRAY_AS_LIST = MethodMatchers.create()
+    .ofTypes("java.util.Arrays")
+    .names("asList")
+    .withAnyParameters()
+    .build();
+
   private static final List<String> STARTS = Arrays.asList(
     "/",
     "./",
@@ -96,8 +102,7 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
     }
     ExpressionTree expressionTree = arguments.get(0);
     if (expressionTree.is(Tree.Kind.STRING_LITERAL)) {
-      Optional<String> command = expressionTree.asConstant(String.class);
-      if (!command.isPresent() || isCompliant(command.get())) {
+      if (isStringLiteralCommandValid(expressionTree)) {
         return;
       }
       reportIssue(tree, MESSAGE);
@@ -112,7 +117,26 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
         return;
       }
       reportIssue(tree, MESSAGE);
+    } else if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree invocation = (MethodInvocationTree) expressionTree;
+      if (!ARRAY_AS_LIST.matches(invocation)) {
+        return;
+      }
+      Arguments listArguments = invocation.arguments();
+      if (listArguments.isEmpty()) {
+        return;
+      }
+      ExpressionTree firstArgument = listArguments.get(0);
+      if(!firstArgument.is(Tree.Kind.STRING_LITERAL) || isStringLiteralCommandValid(firstArgument)) {
+        return;
+      }
+      reportIssue(tree, MESSAGE);
     }
+  }
+
+  private boolean isStringLiteralCommandValid(ExpressionTree stringLitteral) {
+    Optional<String> command = stringLitteral.asConstant(String.class);
+    return !command.isPresent() || isCompliant(command.get());
   }
 
   private boolean isIdentifierCommandValid(IdentifierTree identifier) {

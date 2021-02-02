@@ -54,6 +54,13 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
     .addParametersMatcher(STRING_ARRAY_TYPE, STRING_ARRAY_TYPE, "java.io.File")
     .build();
 
+  //FIXME target variadic String parameter list
+  private static final MethodMatchers COMMAND_MATCHER = MethodMatchers.create()
+    .ofTypes("java.lang.ProcessBuilder")
+    .names("command")
+    .withAnyParameters()
+    .build();
+
   private static final List<String> STARTS = Arrays.asList(
     "/",
     "./",
@@ -70,7 +77,10 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
 
   @Override
   protected MethodMatchers getMethodInvocationMatchers() {
-    return EXEC_MATCHER;
+    return MethodMatchers.or(
+      EXEC_MATCHER,
+      COMMAND_MATCHER
+    );
   }
 
   private static boolean isCompliant(String command) {
@@ -81,6 +91,9 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree tree) {
     Arguments arguments = tree.arguments();
+    if (arguments.isEmpty()) {
+      return;
+    }
     ExpressionTree expressionTree = arguments.get(0);
     if (expressionTree.is(Tree.Kind.STRING_LITERAL)) {
       Optional<String> command = expressionTree.asConstant(String.class);

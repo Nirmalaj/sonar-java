@@ -22,6 +22,7 @@ package org.sonar.java.checks;
 import org.junit.jupiter.api.Test;
 import org.sonar.java.checks.verifier.JavaCheckVerifier;
 
+import static org.sonar.java.CheckTestUtils.nonCompilingTestSourcesPath;
 import static org.sonar.java.CheckTestUtils.testSourcesPath;
 
 class OSCommandsPathCheckTest {
@@ -29,6 +30,14 @@ class OSCommandsPathCheckTest {
   void test() {
     JavaCheckVerifier.newVerifier()
       .onFile(testSourcesPath("checks/OSCommandsPath.java"))
+      .withCheck(new OSCommandsPathCheck())
+      .verifyIssues();
+  }
+
+  @Test
+  void test_java_9() {
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/OSCommandsPath.java"))
       .withCheck(new OSCommandsPathCheck())
       .verifyIssues();
   }

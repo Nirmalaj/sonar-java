@@ -72,6 +72,11 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
       .ofTypes("java.util.Collections")
       .names("singletonList")
       .withAnyParameters()
+      .build(),
+    MethodMatchers.create()
+      .ofTypes("java.util.List")
+      .names("of")
+      .withAnyParameters()
       .build()
   );
 

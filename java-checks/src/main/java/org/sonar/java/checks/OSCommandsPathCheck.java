@@ -61,11 +61,19 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
     .withAnyParameters()
     .build();
 
-  private static final MethodMatchers ARRAY_AS_LIST = MethodMatchers.create()
-    .ofTypes("java.util.Arrays")
-    .names("asList")
-    .withAnyParameters()
-    .build();
+  //FIMXE add support of List.of, Collections.singletonList
+  private static final MethodMatchers LIST_CREATION_MATCHER = MethodMatchers.or(
+    MethodMatchers.create()
+      .ofTypes("java.util.Arrays")
+      .names("asList")
+      .withAnyParameters()
+      .build(),
+    MethodMatchers.create()
+      .ofTypes("java.util.Collections")
+      .names("singletonList")
+      .withAnyParameters()
+      .build()
+  );
 
   private static final List<String> STARTS = Arrays.asList(
     "/",
@@ -164,7 +172,7 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
 
   private boolean isListCommandValid(ExpressionTree listInitializer) {
     MethodInvocationTree invocation = (MethodInvocationTree) listInitializer;
-    if (!ARRAY_AS_LIST.matches(invocation)) {
+    if (!LIST_CREATION_MATCHER.matches(invocation)) {
       return true;
     }
     Arguments listArguments = invocation.arguments();

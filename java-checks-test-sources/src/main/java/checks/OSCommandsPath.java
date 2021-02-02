@@ -3,6 +3,7 @@ package checks;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class OSCommandsPath {
@@ -258,5 +259,22 @@ public class OSCommandsPath {
     builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_PARENT);
     builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT);
     builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK);
+
+    builder.command(Collections.singletonList("make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("m../ake"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("mak./e"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("bin~/make"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("7:\\\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("m..\\ake"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("ma.\\ke"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("SERVER\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("/usr/bin/make"));
+    builder.command(Collections.singletonList("../make"));
+    builder.command(Collections.singletonList("./make"));
+    builder.command(Collections.singletonList("~/bin/make"));
+    builder.command(Collections.singletonList("Z:\\make"));
+    builder.command(Collections.singletonList("..\\make"));
+    builder.command(Collections.singletonList(".\\make"));
+    builder.command(Collections.singletonList("\\\\SERVER\\make"));
   }
 }

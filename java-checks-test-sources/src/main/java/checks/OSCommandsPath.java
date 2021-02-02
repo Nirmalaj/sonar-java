@@ -54,7 +54,7 @@ public class OSCommandsPath {
   private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT = Arrays.asList("ma.\\ke");
   private static final List<String> NON_COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK = Arrays.asList("SERVER\\make");
 
-  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_ABSOLUTE = Arrays.asList("/usr/bin/make");
+  private static final List<String> COMPLIANT_COMMAND_LIST_UNIX = Arrays.asList("/usr/bin/make");
   private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_PARENT = Arrays.asList("../make");
   private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_CURRENT = Arrays.asList("./make");
   private static final List<String> COMPLIANT_COMMAND_LIST_UNIX_HOME = Arrays.asList("~/bin/make");
@@ -233,7 +233,6 @@ public class OSCommandsPath {
     builder.command(Arrays.asList("m..\\ake"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
     builder.command(Arrays.asList("ma.\\ke"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
     builder.command(Arrays.asList("SERVER\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
-
     builder.command(Arrays.asList("/usr/bin/make"));
     builder.command(Arrays.asList("../make"));
     builder.command(Arrays.asList("./make"));
@@ -242,5 +241,22 @@ public class OSCommandsPath {
     builder.command(Arrays.asList("..\\make"));
     builder.command(Arrays.asList(".\\make"));
     builder.command(Arrays.asList("\\\\SERVER\\make"));
+
+    builder.command(NON_COMPLIANT_COMMAND_LIST);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_HOME);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_PARENT);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_CURRENT);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_HOME);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_PARENT);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK);
   }
 }

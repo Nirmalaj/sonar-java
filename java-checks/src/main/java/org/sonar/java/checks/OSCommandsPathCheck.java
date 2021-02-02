@@ -118,16 +118,7 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
       }
       reportIssue(tree, MESSAGE);
     } else if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
-      MethodInvocationTree invocation = (MethodInvocationTree) expressionTree;
-      if (!ARRAY_AS_LIST.matches(invocation)) {
-        return;
-      }
-      Arguments listArguments = invocation.arguments();
-      if (listArguments.isEmpty()) {
-        return;
-      }
-      ExpressionTree firstArgument = listArguments.get(0);
-      if(!firstArgument.is(Tree.Kind.STRING_LITERAL) || isStringLiteralCommandValid(firstArgument)) {
+      if (isListCommandValid(expressionTree)) {
         return;
       }
       reportIssue(tree, MESSAGE);
@@ -156,8 +147,32 @@ public class OSCommandsPathCheck extends AbstractMethodDetection {
         return true;
       }
       return isNewArrayCommandValid(initializer);
+    } else if (type.is("java.util.List")) {
+      Tree declaration = symbol.declaration();
+      if (declaration == null || !declaration.is(Tree.Kind.VARIABLE)) {
+        return true;
+      }
+      VariableTree variable = (VariableTree) declaration;
+      ExpressionTree initializer = variable.initializer();
+      if (initializer == null || !initializer.is(Tree.Kind.METHOD_INVOCATION)) {
+        return true;
+      }
+      return isListCommandValid(initializer);
     }
     return false;
+  }
+
+  private boolean isListCommandValid(ExpressionTree listInitializer) {
+    MethodInvocationTree invocation = (MethodInvocationTree) listInitializer;
+    if (!ARRAY_AS_LIST.matches(invocation)) {
+      return true;
+    }
+    Arguments listArguments = invocation.arguments();
+    if (listArguments.isEmpty()) {
+      return true;
+    }
+    ExpressionTree firstArgument = listArguments.get(0);
+    return !firstArgument.is(Tree.Kind.STRING_LITERAL) || isStringLiteralCommandValid(firstArgument);
   }
 
   private boolean isNewArrayCommandValid(ExpressionTree arrayInitializer) {
